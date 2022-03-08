@@ -7,7 +7,7 @@ var yercekimi = 1;
 var gunesinKutlesi = 40;
 var maddeSayisi = 89;
 var kuyrukUzunluğu = 8;
-var TRAIL_THICKNESS = 4;
+var kuyrukKalinlik = 4;
 let baslangicHizlari = [1.5, 0];
 var kuyrukRengi = 'blue'
 var maddeRengi = 'white'
@@ -94,7 +94,7 @@ Madde.prototype.adim = function () {
 
 Madde.prototype.ciz = function () {
     stroke(kuyrukRengi);
-    strokeWeight(TRAIL_THICKNESS);
+    strokeWeight(kuyrukKalinlik);
     line(this.x, this.y, this.sonX, this.sonY);
     strokeWeight(1);
     fill(maddeRengi);
