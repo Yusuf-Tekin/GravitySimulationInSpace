@@ -3,15 +3,18 @@
 
 //x,y
 
-var yercekimi = 1;
-var gunesinKutlesi = 40;
-var maddeSayisi = 89;
-var kuyrukUzunluğu = 8;
-var kuyrukKalinlik = 4;
+let yercekimi = 0.11;
+let gunesinKutlesi = 40;
+let maddeSayisi = 89;
+let kuyrukUzunluğu = 8;
+let kuyrukKalinlik = 4;
 let baslangicHizlari = [1.5, 0];
-var kuyrukRengi = 'blue'
-var maddeRengi = 'white'
-var FPS = 80;
+let kuyrukRengi = 'blue'
+let maddeRengi = 'white'
+let FPS = 80;
+let uzaklik;
+let dunyaSicakligi = 24;
+
 
 let Hiz = function (x, y) {
     this.x = x;
@@ -51,9 +54,6 @@ Madde.prototype.cekmeKuvveti = function (digerMadde, sim) {
         return;
     }
 
-    if (this.x === digerMadde.x) {
-        console.log('Çarpıştı')
-    }
     else {
         // Formül için gerekli çıkartmalar
         // Formül -> İki cisim arası uzaklığı kordinat sistemine göre bulma
@@ -64,10 +64,11 @@ Madde.prototype.cekmeKuvveti = function (digerMadde, sim) {
         let yFark = digerMadde.y - this.y;
 
         // İki cisim arası uzaklık
-        let uzaklik = Math.sqrt(
+        uzaklik = Math.sqrt(
             Math.pow(xFark, 2) + Math.pow(yFark, 2)
         )
 
+        
 
         // Her maddenin az olsa çekme kuvveti vardır.Aslında kütle çekim kuvveti daha doğru olur
         // Bunu hesaplamak için ise şu formül yeterlidir.
@@ -75,14 +76,14 @@ Madde.prototype.cekmeKuvveti = function (digerMadde, sim) {
         // Tabi biz burda bir simülasyon yaptığımız için G sabitini kullanmayacağız. :D
         // Bir çekim etkisi oluşması için ise yerÇekimi değişkenini oluşturacağız.Tabiki bu değer her madde için farklı.
         // Ancak biz simülasyon gereği her maddenin yer çekimini sabit bir sayı kullanacağız. 
-        let cekmeKuvveti = sim.yercekimi * digerMadde.kutle * this.kutle / Math.pow(uzaklik, 2);
+        let cekmeKuvveti = Math.abs(sim.yercekimi) * digerMadde.kutle * this.kutle / Math.pow(uzaklik, 2);
         // Artık kütle çekimin etkisinde olduğumuz için merkeze uzaklığımız bizim hızımızı etkiler.Dolayısıyla
         // aşağıdaki hesaplamayı yapmak durumundayız.
         xFark = xFark * cekmeKuvveti / this.kutle;
         yFark = yFark * cekmeKuvveti / this.kutle;
-
         this.hiz.hizArtir(xFark, yFark);
     }
+
 
 }
 Madde.prototype.adim = function () {
@@ -104,7 +105,7 @@ Madde.prototype.ciz = function () {
     // Ancak maddelerin çok fazla büyük olmaması için ve ekranda yer kaplamaması için basit bir sorgu var.
 
     if (this.kutle > 30) {
-        ellipse(this.x, this.y, 10, 10);
+        ellipse(this.x, this.y, 80, 80);
     }
     else {
         ellipse(this.x, this.y, 1, 1);
@@ -158,8 +159,9 @@ Simulasyon.prototype.ciz = function () {
 let sim = new Simulasyon();
 // Güneşi Oluştur
 sim.simulasyonaMaddeEkle(gunesinKutlesi, 196, 188, true);
-sim.simulasyonaMaddeEkle(gunesinKutlesi, 350, 248, true);
-sim.simulasyonaMaddeEkle(gunesinKutlesi, 120, 300, true);
+
+sim.simulasyonaMaddeEkle(101, 500, 450, true);
+
 
 
 
@@ -167,7 +169,7 @@ sim.simulasyonaMaddeEkle(gunesinKutlesi, 120, 300, true);
 
 // Madde sayisi kadar madde ekleme
 for (let i = 0; i < 1; i++) {
-    sim.simulasyonaMaddeEkle(5, Math.floor(Math.random() * 200 + 24), Math.floor(Math.random() * 400 + 10), false);
+    sim.simulasyonaMaddeEkle(5, 80,360, false);
 }
 
 function setup() {
@@ -182,3 +184,17 @@ function draw() {
     sim.ciz();
     sim.adim();
 }
+setInterval(() => {
+    console.log(uzaklik, '[' ,dunyaSicakligi,'] [',yercekimi,']' );
+    if(uzaklik < 100) {
+        dunyaSicakligi ++;
+        yercekimi+=Math.random();
+        
+    }
+    if(uzaklik > 200) {
+        dunyaSicakligi --;
+        yercekimi-=Math.random();
+
+        
+    }
+},500)
